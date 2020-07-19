@@ -1,0 +1,52 @@
+// This Stat/Transfer command file was automatically generated on July 10, 2020 at 6:00 PM (v15.1.1247.0616, Mac OS X (Darwin 19.5.0 x86_64))
+//ENCODING UTF-8
+log using /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/testConversions.stlog append
+set numeric-names      n
+set log-level          e
+set in-encoding        system
+set out-encoding       system
+set enc-errors         sub
+set enc-sub-char       _
+set enc-error-limit    100
+set var-case-ci        lower
+set preserve-str-widths y
+set preserve-num-widths y
+set delimiter-rd       autosense
+set quote-char-rd      "
+set ascii-rd-vnames    autosense
+set max-lines          10000
+set skip-rows          0
+set date-fmt-read      "%m[/]%d[/][,]%y[%$c]"
+set time-fmt-read      "%H:%M[:%S[.%N]][%p][[(]%3c[)]]"
+set datetime-fmt-read  "[%m[/]%d[/][,]%y] [%H:%M[:%S[.%N]][%p][[(]%3c[)]]]"
+set date-scan-fmt      "[%m[/]%d[/][,]%y] [%H:%M[:%S[.%N]][%p][[(]%3c[)]]]"
+set century-cutoff     20
+set num-miss-rd        none
+set decimal-point      .
+set thousands-sep      ,
+set sas-date-fmt       "MMDDYY"
+set sas-time-fmt       "TIME"
+set sas-datetime-fmt   "DATETIME"
+set write-file-label   none
+set write-sas-fmts     n
+set write-sas-cat      y
+set write-sas-cat-name /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/auto_1.sas7bcat
+set write-sas-cat-failure n
+set write-sas-attr     y
+set write-ext-attr     y
+set write-stata-se     y
+set sas-outrep         windows_64
+set write-old-ver      18
+
+TYPES /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/vartypes.lst
+
+// Translate Stata files for SAS format
+copy  /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/auto_*SAS.dta sas9 /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/auto_*.sas7bdat -y
+
+// Translate Stata files for SPSS format
+copy  /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/auto_*SPSS.dta spss /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/auto_*.sav -y
+
+// Translate Stata files for Feather format
+copy  /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/auto_*ApacheArrow.dta feather /Users/billy/Desktop/Programs/StataPrograms/r/readit/test/auto_*.feather -y
+
+quit

@@ -1,0 +1,16 @@
+make,          string    // Make and Model
+price,         int       // Price
+mpg,           int       // Mileage (mpg)
+rep78,         int       // Repair Record 1978
+headroom,      double    // Headroom (in.)
+trunk,         int       // Trunk space (cu. ft.)
+weight,        int       // Weight (lbs.)
+length,        int       // Length (in.)
+turn,          int       // Turn Circle (ft.) 
+displacement,  int       // Displacement (cu. in.)
+gear_ratio,    double    // Gear Ratio
+foreign,       byte      // Car type
+src,           string    // Source Filename
+src2,          string    // Source Filename
+datatype,      string    // Type of Data File
+id,            byte      // Observation index
