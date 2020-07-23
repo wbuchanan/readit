@@ -7,11 +7,11 @@
     "properties" : {
         "renameAll" : {
             "type" : ["string", "object"],
-            "description": "Either a string or dict containing mappings to rename variables across all files.  This will be implemented after all files are appended, but may be implemented while consuming files at a later date."
+            "description": "Either a string or dict containing mappings to rename variables across all files.  This will be implemented after all files are appended."
         },
         "globalFileType" : {
             "type" : "string",
-            "enum" : ["stata", "excel", "csv", "pickle", "sas", "tab", "fwf", "json", "html", "feather", "parquet", "hdf", "spss"]
+            "enum" : ["stata", "excel", "csv", "pickle", "sas", "tab", "fwf", "json", "html", "feather", "parquet", "hdf", "spss"],
             "description" : "A string that will define the file types for all files.  This should only be used if all of the data have the same format."
         },
         "globalOptions" : {
@@ -41,6 +41,10 @@
                     "type": "string",
                     "enum" : ["stata", "excel", "csv", "pickle", "sas", "tab", "fwf", "json", "html", "feather", "parquet", "hdf", "spss"],
                     "description": "A string indicating what type of data set is referenced by this file.",
+                },
+                "rename" : {
+                    "type": "object",
+                    "description": "Mapping of column renames for this specific file."
                 },
                 "options" : {
                     "type" : [ "string", "object" ],
