@@ -1,0 +1,5 @@
+*! TOC File
+v 3
+d The readit package
+
+p readit making data management easy again

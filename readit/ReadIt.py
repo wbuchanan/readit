@@ -78,6 +78,7 @@ class ReadIt(object):
                           '.xlsx': 'excel',
                           '.csv': 'csv',
                           '.pkl': 'pickle',
+                          '.pickle': 'pickle',
                           '.sas7bdat': 'sas',
                           '.xport': 'sas',
                           '.tsv': 'tab',

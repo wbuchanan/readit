@@ -29,10 +29,13 @@ prog def readit
 	
 	// If values are passed to the types parameter format them as a list object
 	if `"`types'"' != "" loc types `", types = [ `types' ]"'
+    
+    // Removes sticky quotation marks from the file/directory paths
+    loc root = subinstr(`root', char(34), "", .)
 	
 	// Structure the root argument as a list in case users want to search 
 	// multiple directories
-	loc root `"root = [ `root' ]"'
+	loc root "root = [ `root' ]"
 	
 	// Test to see if there are any additional options
 	if `"`options'"' != "" loc optin ", "
@@ -154,9 +157,12 @@ class ReadIt(object):
                           '.xlsx': 'excel',
                           '.csv': 'csv',
                           '.pkl': 'pickle',
+                          '.pickle': 'pickle',
                           '.sas7bdat': 'sas',
                           '.xport': 'sas',
+                          '.tab': 'tab',
                           '.tsv': 'tab',
+                          '.txt': 'fwf',
                           '.dat': 'fwf',
                           '.json': 'json',
                           '.html': 'html',
@@ -403,51 +409,51 @@ class ReadIt(object):
         """
         if filetype == 'stata':
             args = self._valid_args(kwargs, 'read_stata')
-            return pd.read_stata(filenm, **args).convert_dtypes()
+            return pd.read_stata(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'csv':
             args = self._valid_args(kwargs, 'read_csv')
-            return pd.read_csv(filenm, **args).convert_dtypes()
+            return pd.read_csv(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'excel':
             args = self._valid_args(kwargs, 'read_excel')
-            return pd.read_excel(filenm, **args).convert_dtypes()
+            return pd.read_excel(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'spss':
             args = self._valid_args(kwargs, 'read_spss')
-            return pd.read_spss(filenm, **args).convert_dtypes()
+            return pd.read_spss(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'sas':
             args = self._valid_args(kwargs, 'read_sas')
-            return pd.read_sas(filenm, **args).convert_dtypes()
+            return pd.read_sas(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'html':
             args = self._valid_args(kwargs, 'read_html')
-            return pd.read_html(filenm, **args).convert_dtypes()
+            return pd.read_html(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'fwf':
             args = self._valid_args(kwargs, 'read_sas')
-            return pd.read_sas(filenm, **args).convert_dtypes()
+            return pd.read_sas(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'pickle':
             args = self._valid_args(kwargs, 'read_pickle')
-            return pd.read_pickle(filenm, **args).convert_dtypes()
+            return pd.read_pickle(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'tab':
             args = self._valid_args(kwargs, 'read_table')
-            return pd.read_table(filenm, **args).convert_dtypes()
+            return pd.read_table(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'json':
             if self.raw_json:
                 args = self._valid_args(kwargs, 'read_json')
-                return pd.read_json(filenm, **args).convert_dtypes()
+                return pd.read_json(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
             else:
                 args = self._valid_args(kwargs, 'json_normalize')
                 with open(filenm, 'r') as f:
-                    return pd.io.json.json_normalize(json.load(f.read()), **args).convert_dtypes()
+                    return pd.io.json.json_normalize(json.load(f.read()), **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'fwf':
             args = self._valid_args(kwargs, 'read_fwf')
-            return pd.read_fwf(filenm, **args).convert_dtypes()
+            return pd.read_fwf(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'feather':
             args = self._valid_args(kwargs, 'read_feather')
-            return pd.read_feather(filenm, **args).convert_dtypes()
+            return pd.read_feather(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'parquet':
             args = self._valid_args(kwargs, 'read_parquet')
-            return pd.read_parquet(filenm, **args).convert_dtypes()
+            return pd.read_parquet(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
         elif filetype == 'hdf':
             args = self._valid_args(kwargs, 'read_hdf')
-            return pd.read_hdf(filenm, **args).convert_dtypes()
+            return pd.read_hdf(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
 
     def _valid_args(self, kwargs: {}, iomethod: str) -> dict:
         """
