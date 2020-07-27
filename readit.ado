@@ -280,6 +280,7 @@ class ReadIt(object):
                 for file, file_type in zip(self.files, thetypes):
                     self.file_types[file] = file_type
 
+                    
         # Reads the data into the member variable data
         self.data = [self._read_file(filenm=file, filetype=ext, **kwargs)
                      for file, ext in self.file_types.items()]
@@ -346,8 +347,18 @@ class ReadIt(object):
         :param recursive: Indicates whether or not glob should search for the file name string recursively
         :return: Returns a list of strings containing fully specified file paths that will be consumed and combined.
         """
+        # Test the type of the root parameter
         if isinstance(root, list):
-            return [glob.glob(filenm, recursive=recursive) for filenm in root][0]
+            # Create an empty container in which to accumulate the results
+            files = []
+            # Iterate over the elements of the list passed
+            for filenm in root:
+                # Iterate over the file paths identified from the glob method
+                for i in glob.glob(filenm, recursive = recursive):
+                    # Append the individual file path to the global container
+                    files.append(i)
+            # Return the container created at the start of this condition        
+            return files
         elif isinstance(root, str):
             return glob.glob(root, recursive=recursive)
         else:
@@ -409,51 +420,51 @@ class ReadIt(object):
         """
         if filetype == 'stata':
             args = self._valid_args(kwargs, 'read_stata')
-            return pd.read_stata(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_stata(filenm, **args).convert_dtypes()
         elif filetype == 'csv':
             args = self._valid_args(kwargs, 'read_csv')
-            return pd.read_csv(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_csv(filenm, **args).convert_dtypes()
         elif filetype == 'excel':
             args = self._valid_args(kwargs, 'read_excel')
-            return pd.read_excel(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_excel(filenm, **args).convert_dtypes()
         elif filetype == 'spss':
             args = self._valid_args(kwargs, 'read_spss')
-            return pd.read_spss(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_spss(filenm, **args).convert_dtypes()
         elif filetype == 'sas':
             args = self._valid_args(kwargs, 'read_sas')
-            return pd.read_sas(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_sas(filenm, **args).convert_dtypes()
         elif filetype == 'html':
             args = self._valid_args(kwargs, 'read_html')
-            return pd.read_html(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_html(filenm, **args).convert_dtypes()
         elif filetype == 'fwf':
             args = self._valid_args(kwargs, 'read_sas')
-            return pd.read_sas(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_sas(filenm, **args).convert_dtypes()
         elif filetype == 'pickle':
             args = self._valid_args(kwargs, 'read_pickle')
-            return pd.read_pickle(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_pickle(filenm, **args).convert_dtypes()
         elif filetype == 'tab':
             args = self._valid_args(kwargs, 'read_table')
-            return pd.read_table(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_table(filenm, **args).convert_dtypes()
         elif filetype == 'json':
             if self.raw_json:
                 args = self._valid_args(kwargs, 'read_json')
-                return pd.read_json(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+                return pd.read_json(filenm, **args).convert_dtypes()
             else:
                 args = self._valid_args(kwargs, 'json_normalize')
                 with open(filenm, 'r') as f:
-                    return pd.io.json.json_normalize(json.load(f.read()), **args).convert_dtypes().dropna(axis = 1, how = 'all')
+                    return pd.io.json.json_normalize(json.load(f.read()), **args).convert_dtypes()
         elif filetype == 'fwf':
             args = self._valid_args(kwargs, 'read_fwf')
-            return pd.read_fwf(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_fwf(filenm, **args).convert_dtypes()
         elif filetype == 'feather':
             args = self._valid_args(kwargs, 'read_feather')
-            return pd.read_feather(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_feather(filenm, **args).convert_dtypes()
         elif filetype == 'parquet':
             args = self._valid_args(kwargs, 'read_parquet')
-            return pd.read_parquet(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_parquet(filenm, **args).convert_dtypes()
         elif filetype == 'hdf':
             args = self._valid_args(kwargs, 'read_hdf')
-            return pd.read_hdf(filenm, **args).convert_dtypes().dropna(axis = 1, how = 'all')
+            return pd.read_hdf(filenm, **args).convert_dtypes()
 
     def _valid_args(self, kwargs: {}, iomethod: str) -> dict:
         """
