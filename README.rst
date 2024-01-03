@@ -3,6 +3,11 @@ READIT
 
 `readit` is a Python enabled Stata package to read and append multiple files quickly and easily.  
 
+## Installation
+Install the package from GitHub
+
+>>> net install readit, from(https://raw.github.com/wbuchanan/readit/master/)
+
 
 ## Usage
 
