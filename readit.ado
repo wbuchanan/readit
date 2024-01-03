@@ -210,9 +210,9 @@ class ReadIt(object):
                           'int64': 5,
                           'float32': 4,
                           'float64': 5,
-                          'Int8': 1,
-                          'Int16': 2,
-                          'Int32': 3,
+                          'Int8': 1.1,
+                          'Int16': 2.1,
+                          'Int32': 3.1,
                           'Int64': 5,
                           'Float32': 4,
                           'Float64': 5,
@@ -230,8 +230,11 @@ class ReadIt(object):
             -1 : 'string',
             0 : 'categorical',
             1 : 'int8',
+            1.1: 'Int8',
             2 : 'int16',
+            2.1 : 'Int16',
             3 : 'int32',
+            3.1 : 'int32',
             4 : 'float32',
             5 : 'float64'
         }
@@ -573,6 +576,7 @@ class ReadIt(object):
         vorig = {}
         for varname in varnames:
             vtype = self.DTYPE_MAP.get(self.data[varname].dtype.name, 'Unknown')
+            if vtype in ['str', 'object']:
             vmiss[varname] = self.MISSINGS[vtype]
             vorig[varname] = self.data[varname].dtype.name
             if vtype in ['string', 'object']:
@@ -709,8 +713,15 @@ class ReadIt(object):
         for label_name in labelNames:
             sfi.ValueLabel.setVarValueLabel(label_name, label_name)
 
-    def nice_missing(self):
-        self.data.fillna(value = self.miss_map, inplace = True, downcast=None)
+    def nice_missing(self) -> []:
+        # Fix the string missings
+        self.data.fillna(value = self.miss_map, inplace = True)
+        
+        # For numerical variables, sfi.Data.store() needs the full double maximum value to make an observation missing 
+        # even if variable smaller types. So we need to replace after covnerting to list so that we don't change the other values.
+        datavals = self.data.values.tolist()
+        datavals = [[dataval if not pd.isna(dataval) else sfi.Missing.getValue() for dataval in datarow] for datarow in datavals]
+        return datavals
 
     def _rename_global(self, rename_map: {}):
         """
@@ -728,8 +739,8 @@ class ReadIt(object):
         self._set_obs(n_observations=self.nrows)
         self.make_vars(name_and_type=self.var_types)
         self.define_value_labels(mapping_list=self.value_labels)
-        self.nice_missing()
-        sfi.Data.store(var=None, obs=None, val=self.data.values.tolist())
+        datavals= self.nice_missing()
+        sfi.Data.store(var=None, obs=None, val=datavals)
         self.apply_value_labels(labelNames=self.value_labels.keys())
 
 end
