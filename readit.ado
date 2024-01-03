@@ -497,7 +497,8 @@ class ReadIt(object):
         :param dfs: A list of pandas.DataFrame objects that will be appended to form a single data set.
         """
         # Appends all of the data into a single pd.DataFrame object
-        self.data = pd.concat(dfs, axis=0, join = 'inner', ignore_index=True, sort=True)
+        sort = len(dfs) > 1
+        self.data = pd.concat(dfs, axis=0, join = 'inner', ignore_index=True, sort=sort)
         # Trying to replace missing values with a similar missing type
         #self.data.fillna(value=np.nan, axis=1, inplace=True)
 
