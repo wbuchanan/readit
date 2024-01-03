@@ -577,7 +577,7 @@ class ReadIt(object):
         for varname in varnames:
             vtype = self.DTYPE_MAP.get(self.data[varname].dtype.name, 'Unknown')
             if vtype in ['str', 'object']:
-            vmiss[varname] = self.MISSINGS[vtype]
+                vmiss[varname] = self.MISSINGS[vtype]
             vorig[varname] = self.data[varname].dtype.name
             if vtype in ['string', 'object']:
                 string_length = self.data[varname].apply(str).map(len).max()
@@ -691,17 +691,18 @@ class ReadIt(object):
         for mapping in mapping_list:
             self.data.replace({mapping: mapping_list[mapping]}, inplace=True)
 
-    def define_value_labels(self, mapping_list: {}):
+    @staticmethod
+    def define_value_labels(mapping_list: {}):
         """
         Function used to define new value labels for use in Stata
         :param mapping_list: Contains a Dictionary where the keys are the names of the variables that correspond to the
         value labels and the values are Dictionaries that map the string labels (keys) to numeric values (values) that
         are used to define the value labels associated with the variable.
         """
-        for varname in mapping_list.keys():
-            sfi.ValueLabel.createLabel(varname)
-            for label, value in mapping_list[varname].items():
-                sfi.ValueLabel.setLabelValue(varname, value, label)
+        for name in mapping_list.keys():
+            sfi.ValueLabel.createLabel(name)
+            for label, value in mapping_list[name].items():
+                sfi.ValueLabel.setLabelValue(name, value, label)
 
     def apply_value_labels(self, labelNames: [str]):
         """
@@ -730,6 +731,32 @@ class ReadIt(object):
         the concatenated data frame object.
         """
         self.data.rename(columns = rename_map, errors = 'ignore', inplace = True)
+        
+
+    @staticmethod
+    def _set_stata_metadata(stata_metadata : dict):
+        #define_value_labels takes it the reverse way as getValueLabels() generates it. Also conver to int.
+        vls_reversed =  {name:{value: int(key) for key, value in vldict.items()} for name, vldict in stata_metadata['vls'].items()}
+        ReadIt.define_value_labels(mapping_list=vls_reversed)
+
+        if 'var_meta' in stata_metadata:
+            for var, (label, format, value_label) in stata_metadata['var_meta'].items():
+                sfi.Data.setVarLabel(var, label)
+                sfi.Data.setVarFormat(var, format)
+                if value_label!="":
+                    sfi.ValueLabel.setVarValueLabel(var, value_label)
+
+        if 'data_label' in stata_metadata:
+            sfi.SFIToolkit.stata('label data "' + stata_metadata['data_label'] + '"')  #Ugh, no way to use direct Python API
+        
+        if 'dta_chars' in stata_metadata:
+            for name, value  in stata_metadata['dta_chars'].items():
+                sfi.Characteristic.setDtaChar(name, value)
+                
+        if 'var_chars' in stata_metadata:
+            for var, chardict in stata_metadata['var_chars'].items():
+                for name, value in chardict.items():
+                    sfi.Characteristic.setVariableChar(var, name, value)
 
     def load_data(self):
         """
@@ -737,11 +764,16 @@ class ReadIt(object):
         housekeeping to get everything set up.
         """
         self._set_obs(n_observations=self.nrows)
-        self.make_vars(name_and_type=self.var_types)
-        self.define_value_labels(mapping_list=self.value_labels)
+        if 'stata_metadata' in self.data.attrs:
+            self.make_vars(name_and_type=self.data.attrs['stata_metadata']['var_types'])
+        else:
+            self.make_vars(name_and_type=self.var_types)
+        ReadIt.define_value_labels(mapping_list=self.value_labels)
         datavals= self.nice_missing()
         sfi.Data.store(var=None, obs=None, val=datavals)
         self.apply_value_labels(labelNames=self.value_labels.keys())
+        if 'stata_metadata' in self.data.attrs:
+            ReadIt._set_stata_metadata(self.data.attrs['stata_metadata'])
 
 end
 	
