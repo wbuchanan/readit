@@ -22,7 +22,10 @@ from pandas import read_stata, \
     read_feather, \
     read_parquet, \
     read_hdf
-from pandas.io.json import json_normalize
+try:
+    from pandas.io.json import json_normalize  # old location
+except:
+    from pandas import json_normalize
 
 
 
