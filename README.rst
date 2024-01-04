@@ -6,7 +6,7 @@ READIT
 ## Installation
 Install the package from GitHub
 
->>> net install readit, from(https://raw.github.com/wbuchanan/readit/master/)
+>>> net install readit, from(https://wbuchanan.github.io/readit)
 
 
 ## Usage
