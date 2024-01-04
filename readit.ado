@@ -98,8 +98,10 @@ from pandas import read_stata, \
     read_feather, \
     read_parquet, \
     read_hdf
-from pandas.io.json import json_normalize
-
+try:
+    from pandas.io.json import json_normalize  # old location
+except:
+    from pandas import json_normalize
 
 
 class ReadIt(object):
@@ -208,9 +210,9 @@ class ReadIt(object):
                           'int64': 5,
                           'float32': 4,
                           'float64': 5,
-                          'Int8': 1,
-                          'Int16': 2,
-                          'Int32': 3,
+                          'Int8': 1.1,
+                          'Int16': 2.1,
+                          'Int32': 3.1,
                           'Int64': 5,
                           'Float32': 4,
                           'Float64': 5,
@@ -228,8 +230,11 @@ class ReadIt(object):
             -1 : 'string',
             0 : 'categorical',
             1 : 'int8',
+            1.1: 'Int8',
             2 : 'int16',
+            2.1 : 'Int16',
             3 : 'int32',
+            3.1 : 'int32',
             4 : 'float32',
             5 : 'float64'
         }
@@ -495,7 +500,8 @@ class ReadIt(object):
         :param dfs: A list of pandas.DataFrame objects that will be appended to form a single data set.
         """
         # Appends all of the data into a single pd.DataFrame object
-        self.data = pd.concat(dfs, axis=0, join = 'inner', ignore_index=True, sort=True)
+        sort = len(dfs) > 1
+        self.data = pd.concat(dfs, axis=0, join = 'inner', ignore_index=True, sort=sort)
         # Trying to replace missing values with a similar missing type
         #self.data.fillna(value=np.nan, axis=1, inplace=True)
 
@@ -570,7 +576,8 @@ class ReadIt(object):
         vorig = {}
         for varname in varnames:
             vtype = self.DTYPE_MAP.get(self.data[varname].dtype.name, 'Unknown')
-            vmiss[varname] = self.MISSINGS[vtype]
+            if vtype in ['str', 'object']:
+                vmiss[varname] = self.MISSINGS[vtype]
             vorig[varname] = self.data[varname].dtype.name
             if vtype in ['string', 'object']:
                 string_length = self.data[varname].apply(str).map(len).max()
@@ -684,17 +691,18 @@ class ReadIt(object):
         for mapping in mapping_list:
             self.data.replace({mapping: mapping_list[mapping]}, inplace=True)
 
-    def define_value_labels(self, mapping_list: {}):
+    @staticmethod
+    def define_value_labels(mapping_list: {}):
         """
         Function used to define new value labels for use in Stata
         :param mapping_list: Contains a Dictionary where the keys are the names of the variables that correspond to the
         value labels and the values are Dictionaries that map the string labels (keys) to numeric values (values) that
         are used to define the value labels associated with the variable.
         """
-        for varname in mapping_list.keys():
-            sfi.ValueLabel.createLabel(varname)
-            for label, value in mapping_list[varname].items():
-                sfi.ValueLabel.setLabelValue(varname, value, label)
+        for name in mapping_list.keys():
+            sfi.ValueLabel.createLabel(name)
+            for label, value in mapping_list[name].items():
+                sfi.ValueLabel.setLabelValue(name, value, label)
 
     def apply_value_labels(self, labelNames: [str]):
         """
@@ -706,8 +714,15 @@ class ReadIt(object):
         for label_name in labelNames:
             sfi.ValueLabel.setVarValueLabel(label_name, label_name)
 
-    def nice_missing(self):
-        self.data.fillna(value = self.miss_map, inplace = True, downcast=None)
+    def nice_missing(self) -> []:
+        # Fix the string missings
+        self.data.fillna(value = self.miss_map, inplace = True)
+        
+        # For numerical variables, sfi.Data.store() needs the full double maximum value to make an observation missing 
+        # even if variable smaller types. So we need to replace after covnerting to list so that we don't change the other values.
+        datavals = self.data.values.tolist()
+        datavals = [[dataval if not pd.isna(dataval) else sfi.Missing.getValue() for dataval in datarow] for datarow in datavals]
+        return datavals
 
     def _rename_global(self, rename_map: {}):
         """
@@ -716,6 +731,32 @@ class ReadIt(object):
         the concatenated data frame object.
         """
         self.data.rename(columns = rename_map, errors = 'ignore', inplace = True)
+        
+
+    @staticmethod
+    def _set_stata_metadata(stata_metadata : dict):
+        #define_value_labels takes it the reverse way as getValueLabels() generates it. Also conver to int.
+        vls_reversed =  {name:{value: int(key) for key, value in vldict.items()} for name, vldict in stata_metadata['vls'].items()}
+        ReadIt.define_value_labels(mapping_list=vls_reversed)
+
+        if 'var_meta' in stata_metadata:
+            for var, (label, format, value_label) in stata_metadata['var_meta'].items():
+                sfi.Data.setVarLabel(var, label)
+                sfi.Data.setVarFormat(var, format)
+                if value_label!="":
+                    sfi.ValueLabel.setVarValueLabel(var, value_label)
+
+        if 'data_label' in stata_metadata:
+            sfi.SFIToolkit.stata('label data "' + stata_metadata['data_label'] + '"')  #Ugh, no way to use direct Python API
+        
+        if 'dta_chars' in stata_metadata:
+            for name, value  in stata_metadata['dta_chars'].items():
+                sfi.Characteristic.setDtaChar(name, value)
+                
+        if 'var_chars' in stata_metadata:
+            for var, chardict in stata_metadata['var_chars'].items():
+                for name, value in chardict.items():
+                    sfi.Characteristic.setVariableChar(var, name, value)
 
     def load_data(self):
         """
@@ -723,11 +764,16 @@ class ReadIt(object):
         housekeeping to get everything set up.
         """
         self._set_obs(n_observations=self.nrows)
-        self.make_vars(name_and_type=self.var_types)
-        self.define_value_labels(mapping_list=self.value_labels)
-        self.nice_missing()
-        sfi.Data.store(var=None, obs=None, val=self.data.values.tolist())
+        if 'stata_metadata' in self.data.attrs:
+            self.make_vars(name_and_type=self.data.attrs['stata_metadata']['var_types'])
+        else:
+            self.make_vars(name_and_type=self.var_types)
+        ReadIt.define_value_labels(mapping_list=self.value_labels)
+        datavals= self.nice_missing()
+        sfi.Data.store(var=None, obs=None, val=datavals)
         self.apply_value_labels(labelNames=self.value_labels.keys())
+        if 'stata_metadata' in self.data.attrs:
+            ReadIt._set_stata_metadata(self.data.attrs['stata_metadata'])
 
 end
 	

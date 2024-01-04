@@ -15,6 +15,8 @@ d KW: data munging
 d
 d Requires: Stata version 16
 d
+d Distribution-Date: 20200727
+d
 d Author: Billy Buchanan
 d                 Director
 d                 Office of Grants, Research, Accountability, & Data
@@ -25,5 +27,4 @@ d Support: email billy [dot] buchanan [at] fayette.kyschools.us
 d
 f readit.ado
 f readit.sthlp
-
 
