@@ -440,7 +440,7 @@ class ReadIt(object):
             return pd.read_sas(filenm, **args).convert_dtypes()
         elif filetype == 'html':
             args = self._valid_args(kwargs, 'read_html')
-            return pd.read_html(filenm, **args).convert_dtypes()
+            return pd.read_html(filenm, **args)[0].convert_dtypes()
         elif filetype == 'pickle':
             args = self._valid_args(kwargs, 'read_pickle')
             return pd.read_pickle(filenm, **args).convert_dtypes()
