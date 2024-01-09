@@ -1,7 +1,6 @@
-// For now, just saves files in parquet format. Later make more general
-// Usage: saveit auto.parquet, replace
-
-//TODO: Test using both parquet engines
+*! version 1.0.0.
+*! Saves files in multiple formats using Python's Pandas functionality.
+*! Usage: saveit auto.parquet, replace
 program saveit
     syntax anything [, REPlace Type(string) pd_options(string)]
 
