@@ -122,7 +122,7 @@ class ReadIt(object):
         automatically.
         :param recursive: Indicates whether or not glob should search for the file name string recursively
         :param raw_json: A boolean used to determine which JSON parsing method to use when reading the data.  If True,
-        the class will use pandas.read_json() otherwise, a file object is passed to pandas.io.json.json_normalize()
+        the class will use pandas.read_json() otherwise, a file object is passed to pandas' json_normalize()
         :param kwargs: The optional keyword arguments that can be passed to the constructor are used to trigger behaviors
         of the pandas data parsers.  Passing keyword arguments here can be useful if you only want to retain a subset of
         the data from the files and the columns you wish to keep/exclude exist in all of the files.
@@ -440,10 +440,7 @@ class ReadIt(object):
             return pd.read_sas(filenm, **args).convert_dtypes()
         elif filetype == 'html':
             args = self._valid_args(kwargs, 'read_html')
-            return pd.read_html(filenm, **args).convert_dtypes()
-        elif filetype == 'fwf':
-            args = self._valid_args(kwargs, 'read_sas')
-            return pd.read_sas(filenm, **args).convert_dtypes()
+            return pd.read_html(filenm, **args)[0].convert_dtypes()
         elif filetype == 'pickle':
             args = self._valid_args(kwargs, 'read_pickle')
             return pd.read_pickle(filenm, **args).convert_dtypes()
@@ -457,7 +454,7 @@ class ReadIt(object):
             else:
                 args = self._valid_args(kwargs, 'json_normalize')
                 with open(filenm, 'r') as f:
-                    return pd.io.json.json_normalize(json.load(f.read()), **args).convert_dtypes()
+                    return json_normalize(json.load(f.read()), **args).convert_dtypes()
         elif filetype == 'fwf':
             args = self._valid_args(kwargs, 'read_fwf')
             return pd.read_fwf(filenm, **args).convert_dtypes()
