@@ -1,21 +1,25 @@
-d 'READIT': Easily Append Multiple Files of Different Types
+d 'READIT': Use Python to Easily Append Multiple Files of Different Types and Save to Different Types.
 d
 d readit is a package designed to make working with multiple 
-d files easy and performant.  No longer do you need to iterate
+d files and formats easy and performant. The package contains readit.ado,
+d which allows you do no longer have to iterate
 d over all the files and create Stata version files on disk.
 d Now, you can just readit directly into memory...even if the 
-d files were created with different programs (e.g., Feather,
-d SAS, SPSS, HTML, Stata, CSV, etc...).
+d files were created with different programs (e.g., Parquet, Feather,
+d SAS, SPSS, HTML, Stata, CSV, etc...). The package also contains
+d saveit.ado, which allows you to save datasets in many formats supported
+d by Python's Panda package (e.g., Parquet, Feather, HTML, CSV, JSON, XLS). 
 d
 d KW: I/O
 d KW: append
+d KW: export
 d KW: cleaning
 d KW: data management
 d KW: data munging
 d
 d Requires: Stata version 16
 d
-d Distribution-Date: 20200727
+d Distribution-Date: 20240110
 d
 d Author: Billy Buchanan
 d                 Director
@@ -27,4 +31,6 @@ d Support: email billy [dot] buchanan [at] fayette.kyschools.us
 d
 f readit.ado
 f readit.sthlp
+f saveit.ado
+f saveit.sthlp
 
