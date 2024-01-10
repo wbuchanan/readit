@@ -1,4 +1,5 @@
 {smcl}
+{* *! version 0.0.2 10jan2024}{...}
 {vieweralsosee "saveit" "saveit"}{...}
 {vieweralsosee "" "--"}{...}
 {vieweralsosee "[D] append" "mansection D append"}{...}
