@@ -1,7 +1,7 @@
 READIT
 --------
 
-`readit` is a Python enabled Stata package to read and append multiple files quickly and easily.  
+`readit` is a Python enabled Stata package to (a) read and append multiple files quickly and easily, and (b) save to multiple file formats.
 
 ## Installation
 Install the package from GitHub
@@ -22,6 +22,10 @@ Read all files of any format that start with auto clear existing data from memor
 Read all MS Excel, Feather, and SPSS files in the test directory, clear existing data from memory, rename some variables, and pass arguments to the underlying pandas methods:
 
 >>> readit "'test/*.xlsx', 'test/*.feather', 'test/*.sav'", clear ren('src2' : 'backupsrc', 'gear_ratio' : 'gearRatio', 'datatype': 'filetype') "sep = ',', na_values = '', convert_categoricals = False"
+
+Save to parquet format (reading back in with readit.ado will retain all variable types and metadata)
+
+>>> saveit test.parquet, replace
 
 
 

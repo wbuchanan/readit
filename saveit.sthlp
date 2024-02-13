@@ -1,5 +1,7 @@
 {smcl}
-{* *! version 0.0.1 20jul2020}{...}
+{* *! version 1.0.0 10jan2024}{...}
+{vieweralsosee "readit" "readit"}{...}
+{vieweralsosee "" "--"}{...}
 {vieweralsosee "[D] save" "mansection D save"}{...}
 {vieweralsosee "" "--"}{...}
 {vieweralsosee "[D] export excel" "mansection D exportexcel"}{...}
