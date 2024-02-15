@@ -358,6 +358,6 @@ values.{p_end}
 {marker contact}{...}
 {title:Contact}
 {p 4 4 8}William R. Buchanan, Ph.D.{p_end}
-{p 4 4 8}Director{p_end}
-{p 4 4 6}{browse "https://www.fcps.net/Domain/2284":Office of Grants, Research, Accountability, & Data}{p_end}
-{p 4 4 8}Billy.Buchanan at fayette [dot] kyschools [dot] us{p_end}
+{p 4 4 8}Sr. Research Scientist, {browse "https://www.sagcorp.com":SAG Corporation}{p_end}
+{p 4 4 8}wbuchanan@sagcorp.com{p_end}
+

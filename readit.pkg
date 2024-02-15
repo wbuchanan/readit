@@ -19,15 +19,15 @@ d KW: data munging
 d
 d Requires: Stata version 16
 d
-d Distribution-Date: 20240110
+d Distribution-Date: 20240215
 d
 d Author: Billy Buchanan
-d                 Director
-d                 Office of Grants, Research, Accountability, & Data
-d                 Fayette County Public Schools
-d                 Lexington, KY
+d         Sr. Research Scientist, SAG Corporation
+d         
+d         Brian Quistorff
+d         Chief Data Scientist, Bureau of Economic Analysis
 d
-d Support: email billy [dot] buchanan [at] fayette.kyschools.us
+d Support: email wbuchanan@sagcorp.com
 d
 f readit.ado
 f readit.sthlp
