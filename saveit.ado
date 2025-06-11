@@ -64,7 +64,7 @@ def pysaveit(path: str, data_label:str = "", filetype: str = "", **kwargs):
     # ensure Stata integer types are mapped to pd nullable types, rather than float, and ensure float/double correct conversion
     for var in vars:
         v_type = stata_metadata['var_types'][var]
-        if Data.isVarTypeStr(var):
+        if Data.isVarTypeString(var):
             dataraw[var] = pd.array(dataraw[var], dtype=pd.StringDtype()) 
         else:
             dataraw[var] = pd.array(dataraw[var], dtype=types_stata_to_pandas[v_type])
